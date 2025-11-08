@@ -86,7 +86,7 @@
         </select>
 </div>
   <div class="c">
-  <button id="sub" type="submit">Add Task</button>
+        <button id="sub" type="submit">Add Task</button>
   </div>
   
 </form>
@@ -144,12 +144,35 @@
 }
 
 #sub{
-margin-left: 5%;
+width: 10vh;
+height: 150%;  
+margin-top: 10%;
+margin-left: -60%;
 background-color: rgb(173, 227, 227);
-border: 5px;
+border: 10px;
 background-color: rgb(173, 227, 227);
 border-radius: 5px;
 
+}
+input{
+  margin-left: -2vh;
+  width: 150px;  
+  padding: 0.5rem;
+  box-sizing: border-box; 
+}
+
+input::placeholder,
+textarea::placeholder {
+  font-family: 'Roboto Mono', monospace; /* fontul dorit */
+  font-size: 1rem;                        /* mărime text */
+  font-style: italic;                      /* opțional */
+  color: #888;                             /* culoare placeholder */
+}
+
+button{
+  font-family: "Momo Trust Display", sans-serif;
+  font-size: 1rem;                        /* mărime text */
+  color: #black;                             /* culoare placeholder */
 }
 
 </style>
