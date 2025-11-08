@@ -23,11 +23,23 @@
     >
       Acasă
     </a>
-    <a 
-      href="/next"
-      class:active={$page.url.pathname === '/next'}
+     <a 
+      href="/addTask"
+      class:active={$page.url.pathname === '/addTask'}
     >
-      Pagina Următoare
+      <div class="titlu"> 
+     <p id="t">Adaugare</p>
+      <p id="m">Task</p>
+    </div>
+    </a>
+    <a 
+      href="/Tasks"
+      class:active={$page.url.pathname === '/Tasks'}
+    >
+    <div class="titlu"> 
+     <p id="t">Taskurile</p>
+      <p id="m">Mele</p>
+    </div>
     </a>
   </nav>
 </div>
@@ -40,7 +52,8 @@
     display: flex;
     flex-direction: column;
     height: 100vh; /* Ocupă tot ecranul pe înălțime */
-    width: 100vw; /* Ocupă tot ecranul pe lățime */
+    width: 100%; /* Ocupă tot ecranul pe lățime */
+    overflow-x: hidden;
   }
 
   main {
@@ -48,19 +61,32 @@
     overflow-y: auto; /* Adaugă scroll DOAR la conținut, dacă e prea lung */
   }
 
+    .titlu{
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      
+
+    }
+    #t,#m{
+
+      margin: 2px;
+
+    }
   nav {
     flex-shrink: 0; /* Nu lasă bara de navigație să se micșoreze */
     display: flex;
     justify-content: space-around; /* Butoane distribuite egal */
     align-items: center;
     padding: 1rem;
-    background-color: #f0f0f0; /* Un fundal gri deschis */
-    border-top: 1px solid #ddd;
+    background-color: #53d2f2;
+    border-top: 1px sorgb(64, 226, 235)d;
   }
 
   nav a {
     text-decoration: none;
-    color: #333;
+    color: #000000;
     font-size: 1rem;
     padding: 0.5rem 1rem;
     border-radius: 8px;
@@ -74,13 +100,10 @@
     background-color: #007bff;
     color: white;
   }
-
-  /* Stiluri globale:
-    Am scos 'overflow: hidden' pentru a permite scroll-ul 
-    controlat de 'main'.
-  */
+  
   :global(body) {
     margin: 0;
+    overflow-x: hidden;
   }
 
   /* Am scos stilurile globale care forțau înălțimea.

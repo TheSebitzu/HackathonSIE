@@ -4,8 +4,8 @@
 
   <!-- Container pentru butoane -->
   <div class="button-group">
-    <button class="btn yes">yes</button>
-    <button class="btn no">no</button>
+    <button class="btn yes">Login</button>
+    <button class="btn no">Sign Up</button>
   </div>
 </div>
 
@@ -18,9 +18,9 @@
     fundalul roz și îl face să ocupe tot ecranul.
   */
   .container {
-    background-color: #fdfdfd; /* A pink color */
-    height: 100vh; /* 100% of the viewport height */
-    width: 100vw; /* 100% of the viewport width */
+    background-color: #6df3fa; /* A pink color */
+    height: 100%; /* 100% of the viewport height */
+    width: 100%; /* 100% of the viewport width */
     
     /* Folosim flexbox pentru a centra conținutul perfect */
     display: flex;
