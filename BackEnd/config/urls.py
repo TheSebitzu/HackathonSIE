@@ -20,7 +20,5 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    # 2. ADaugă linia asta:
-    # Asta va face ca API-ul tău să fie la http://.../api/tasks/
-    path('api/', include('api.urls')),
+    path('', include('api.urls')),
 ]

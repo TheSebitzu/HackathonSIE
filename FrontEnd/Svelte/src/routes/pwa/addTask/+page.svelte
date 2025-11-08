@@ -1,6 +1,6 @@
 <script>
   
-  import Task from "../../components/Task.svelte";
+  import Task from "../../../components/Task.svelte";
   import { onMount } from "svelte";
 
   let tasks = [];
@@ -21,21 +21,19 @@
   const addTask = async () => {
     if (!title || !start_time || !end_time) return;
 
-    // Format date for Django
     const start = new Date(start_time).toISOString();
     const end = new Date(end_time).toISOString();
-
+    
     const res = await fetch("http://localhost:8000/api/tasks/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        title,
-        description,
-        start_time: start,
-        end_time: end,
-        is_finished: false,
-        status // <-- include the status
-      })
+         title,
+         description,
+          start_time: start,
+         end_time: end,
+         status // <-- Acum totul se potrivește cu serializer-ul
+         })
     });
 
     if (res.ok) {
@@ -129,7 +127,7 @@
   background-color: whitesmoke;
   border-radius: 40px;
   min-height: 60vh; 
-  min-width: 40vh;/* nu ocupă tot ecranul, dar e centrat */
+  min-width: 40vh;
   z-index: 1;
   
 }
@@ -163,16 +161,20 @@ input{
 
 input::placeholder,
 textarea::placeholder {
-  font-family: 'Roboto Mono', monospace; /* fontul dorit */
-  font-size: 1rem;                        /* mărime text */
-  font-style: italic;                      /* opțional */
-  color: #888;                             /* culoare placeholder */
+  font-family: 'Roboto Mono', monospace; 
+  font-size: 1rem;                        
+  font-style: italic;                      
+  color: #888;                            
 }
 
 button{
+  width: 250px;      
+  height: 40px;      
+  font-size: 1.2rem; 
+  padding: 0.5rem 1rem;
   font-family: "Momo Trust Display", sans-serif;
-  font-size: 1rem;                        /* mărime text */
-  color: #black;                             /* culoare placeholder */
+  font-size: 1rem;                        
+  color: black;                             
 }
 
 </style>

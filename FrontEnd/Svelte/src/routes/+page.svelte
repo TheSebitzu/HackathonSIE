@@ -1,24 +1,26 @@
+<script>
+  // Importăm 'goto' pentru navigare programatică
+  import { goto } from '$app/navigation';
+
+  function goToSignUp() {
+    // Asigură-te că ai un fișier src/routes/signup/+page.svelte
+    goto('/auth');
+  }
+</script>
+
 <div class="container">
-  <!-- Titlul paginii -->
   <h1><b>Task Manager</b></h1>
 
-  <!-- Container pentru butoane -->
   <div class="button-group">
-    <button class="btn yes">Login</button>
-    <button class="btn no">Sign Up</button>
+    <button class="btn no" on:click={goToSignUp}>
+      Login
+    </button>
   </div>
 </div>
 
-<!-- 
-  Blocul <style> este specific Svelte.
-  CSS-ul de aici se aplică DOAR acestui component.
--->
 <style>
-  /* Selectează containerul principal și îi setează
-    fundalul roz și îl face să ocupe tot ecranul.
-  */
   .container {
-    background-color: #6df3fa; /* A pink color */
+    background-color: #CADCFC; /* A pink color */
     height: 100%; /* 100% of the viewport height */
     width: 100%; /* 100% of the viewport width */
     
@@ -45,8 +47,6 @@
     display: flex;
     gap: 1rem; /* Adaugă spațiu de 1rem între butoane */
   }
-
-  /* Stil de bază pentru butoane */
   .btn {
     padding: 0.8rem 1.5rem;
     font-size: 1.2rem;
@@ -57,18 +57,9 @@
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
-
-  /* Stil pentru butonul "yes" */
-  .btn.yes {
-    background-color: #4caf50; /* A green color */
-  }
-
-  /* Stil pentru butonul "no" */
   .btn.no {
     background-color: #f44336; /* A red color */
   }
-
-  /* Efect la hover pentru butoane */
   .btn:hover {
     transform: translateY(-2px); /* Ridică ușor butonul */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adaugă umbră */
