@@ -1,6 +1,6 @@
 <div class="container">
   <!-- Titlul paginii -->
-  <h1><b>Task Manager</b></h1>
+  <h1>test</h1>
 
   <!-- Container pentru butoane -->
   <div class="button-group">
@@ -18,7 +18,7 @@
     fundalul roz și îl face să ocupe tot ecranul.
   */
   .container {
-    background-color: #fdfdfd; /* A pink color */
+    background-color: #ffc0cb; /* A pink color */
     height: 100vh; /* 100% of the viewport height */
     width: 100vw; /* 100% of the viewport width */
     
@@ -65,7 +65,7 @@
 
   /* Stil pentru butonul "no" */
   .btn.no {
-    background-color: #f44336; /* A red color */
+    background-color: #15e553; /* A red color */
   }
 
   /* Efect la hover pentru butoane */
