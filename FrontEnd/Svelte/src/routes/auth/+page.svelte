@@ -13,27 +13,21 @@
   let nume = "";
   let prenume = "";
   let telefon = "";
-  // 'manager' îl vom trimite ca 'null' deocamdată,
-  // dacă nu ai un câmp în formular pentru el.
 
-  /**
-   * 1. Funcția de LOGIN
-   * Contactează /api/token/ cu username și password.
-   */
   const login = async () => {
     error = "";
     try {
       const res = await fetch("http://localhost:8000/api/token/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }) // Login se face cu username
+        body: JSON.stringify({ username, password })
       });
 
       if (res.ok) {
         const data = await res.json();
         localStorage.setItem("access_token", data.access);
         localStorage.setItem("refresh_token", data.refresh);
-        window.location.href = "/pwa/Tasks"; // Redirecționează către pagina de task-uri
+        window.location.href = "/pwa/Tasks"; 
       } else {
         error = "Nume de utilizator sau parolă invalidă";
       }
@@ -42,14 +36,10 @@
     }
   };
 
-  /**
-   * 2. Funcția de REGISTER
-   * Contactează /api/register/ cu toate detaliile.
-   */
   const register = async () => {
     error = "";
     try {
-      const res = await fetch("http://localhost:8000/api/register/", { // URL-ul corectat cu /api/
+      const res = await fetch("http://localhost:8000/api/register/", { 
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -59,15 +49,14 @@
           nume,
           prenume,
           telefon,
-          manager: null // Trimite 'null' dacă nu ai un câmp pentru 'manager'
+          manager: null 
         })
       });
 
       if (res.ok) {
         alert("Cont creat cu succes! Te poți loga acum.");
-        mode = "login"; // Comută automat pe modul login
+        mode = "login"; 
         
-        // Golește câmpurile de register
         username = "";
         password = "";
         email = "";
@@ -75,7 +64,6 @@
         prenume = "";
         telefon = "";
       } else {
-        // Afișează eroarea primită de la server (ex. "username already exists")
         const data = await res.json();
         error = Object.entries(data).map(([key, value]) => `${key}: ${value}`).join(', ');
       }
@@ -84,61 +72,70 @@
     }
   };
 
-  /**
-   * 3. Funcția de TOGGLE
-   * Schimbă între modul 'login' și 'register'.
-   */
   const toggleMode = () => {
     mode = mode === "login" ? "register" : "login";
     error = "";
-    // Resetează câmpurile comune
     username = "";
     password = "";
   };
 </script>
-<div slass="tot">
-<h1>{mode === "login" ? "Login" : "Register"}</h1>
 
-<div class="form">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap" rel="stylesheet">
 
-  {#if mode === 'login'}
-    <input placeholder="Username" bind:value={username} />
-    <input type="password" placeholder="Password" bind:value={password} />
-  
-  {:else}
-    <input placeholder="Username (ex: ionpopescu)" bind:value={username} />
-    <input placeholder="Nume (ex: Popescu)" bind:value={nume} />
-    <input placeholder="Prenume (ex: Ion)" bind:value={prenume} />
-    <input placeholder="Email (ex: ion@popescu.com)" type="email" bind:value={email} />
-    <input placeholder="Telefon (opțional)" bind:value={telefon} />
-    <input type="password" placeholder="Password" bind:value={password} />
-  {/if}
 
-  <button on:click={mode === "login" ? login : register}>
-    {mode === "login" ? "Login" : "Register"}
-  </button>
+<div class="tot">
+  <h1>{mode === "login" ? "Login" : "Register"}</h1>
 
-  <p class="error">{error}</p>
+  <div class="form">
 
-  <p class="toggle">
-    {mode === "login" ? "Nu ai cont? " : "Ai deja cont? "}
-    <a href="#" on:click|preventDefault={toggleMode}>
-      {mode === "login" ? "Înregistrează-te" : "Intră în cont"}
-    </a>
-  </p>
+    {#if mode === 'login'}
+      <input placeholder="Username" bind:value={username} />
+      <input type="password" placeholder="Password" bind:value={password} />
+    
+    {:else}
+      <input placeholder="Username (ex: ionpopescu)" bind:value={username} />
+      <input placeholder="Nume (ex: Popescu)" bind:value={nume} />
+      <input placeholder="Prenume (ex: Ion)" bind:value={prenume} />
+      <input placeholder="Email (ex: ion@popescu.com)" type="email" bind:value={email} />
+      <input placeholder="Telefon (opțional)" bind:value={telefon} />
+      <input type="password" placeholder="Password" bind:value={password} />
+    {/if}
+
+    <button on:click={mode === "login" ? login : register}>
+      {mode === "login" ? "Login" : "Register"}
+    </button>
+
+    <p class="error">{error}</p>
+
+    <p class="toggle">
+      {mode === "login" ? "Nu ai cont? " : "Ai deja cont? "}
+      <a href="#" on:click|preventDefault={toggleMode}>
+        {mode === "login" ? "Înregistrează-te" : "Intră în cont"}
+      </a>
+    </p>
+  </div>
 </div>
-</div>
+
 <style>
+  /* Global reset pentru a umple tot ecranul */
+  :global(html, body) {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
 
   .tot{
-    background-color: #93cfdf;
+    background-color: #93cfdf; /* Fundalul albastru */
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-
-
+    align-items: center; /* AICI ERA TYPO-UL 'ce' */
+    min-height: 100vh; /* Asta îl face să umple ecranul */
+    width: 100vw;
+    padding: 1rem;
+    box-sizing: border-box;
   }
+
   h1 {
     text-align: center;
     font-size: 2rem;
@@ -147,14 +144,23 @@
     color: #00246B;
   }
 
+    input::placeholder,
+  textarea::placeholder {
+    font-family: 'Roboto Mono', monospace; 
+    font-size: 1rem;                        
+    font-style: italic;                      
+    color: #888;                            
+  }
+
   .form {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 50vh;
+    /* margin-top: 50vh; <- ACEASTĂ LINIE STRICA CENTRAREA */
     gap: 0.75rem;
     width: 320px;
-    margin: 2rem auto;
+    max-width: 100%;
+    margin: 0; /* Centrarea e făcută de .tot */
     background: white;
     padding: 2rem;
     border-radius: 20px;
@@ -162,13 +168,16 @@
   }
 
   input {
+    width: 100%;
     padding: 0.6rem;
     border-radius: 10px;
     border: 1px solid #ccc;
     font-size: 1rem;
+    box-sizing: border-box;
   }
 
   button {
+    width: 100%;
     padding: 0.7rem;
     border-radius: 12px;
     border: none;
@@ -187,6 +196,7 @@
     color: red;
     font-weight: bold;
     margin-top: 0.5rem;
+    text-align: center;
   }
 
   .toggle {

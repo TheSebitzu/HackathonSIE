@@ -20,32 +20,32 @@
 
 <style>
   .container {
-    background-color: #CADCFC; /* A pink color */
-    height: 100%; /* 100% of the viewport height */
-    width: 100%; /* 100% of the viewport width */
+    background-color: #CADCFC;
     
-    /* Folosim flexbox pentru a centra conținutul perfect */
+    /* === MODIFICAT === */
+    /* Folosim unități de viewport în loc de procente */
+    height: 100vh; /* 100% din înălțimea ecranului */
+    width: 100vw;  /* 100% din lățimea ecranului */
+    /* ================= */
+    
+    /* Restul codului tău de flexbox este perfect */
     display: flex;
-    flex-direction: column; /* Aliniază elementele vertical */
-    justify-content: center; /* Centrează vertical */
-    align-items: center; /* Centrează orizontal */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     
-    /* Setăm fontul pentru lizibilitate */
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
       Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   }
 
-  /* Stilizăm titlul */
   h1 {
-    font-size: 3rem; /* 3 times the base font size */
+    font-size: 3rem;
     color: #333;
-    margin-bottom: 2rem; /* Spațiu sub titlu */
+    margin-bottom: 2rem;
   }
-
-  /* Container pentru a ține butoanele unul lângă altul */
   .button-group {
     display: flex;
-    gap: 1rem; /* Adaugă spațiu de 1rem între butoane */
+    gap: 1rem;
   }
   .btn {
     padding: 0.8rem 1.5rem;
@@ -53,7 +53,7 @@
     font-weight: bold;
     color: white;
     border: none;
-    border-radius: 8px; /* Colțuri rotunjite */
+    border-radius: 8px; 
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
@@ -61,7 +61,7 @@
     background-color: #f44336; /* A red color */
   }
   .btn:hover {
-    transform: translateY(-2px); /* Ridică ușor butonul */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adaugă umbră */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 </style>

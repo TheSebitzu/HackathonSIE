@@ -1,106 +1,104 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  // Tipurile
-  type User = { id: number; name: string };
   type Task = { id: number; title: string };
-  type Group = {
-    id: number;
-    name: string;
-    members: string[];
-    expanded: boolean;
-    task_title: string;
-  };
+  type User = { id: number; name: string };
+  type Group = { id: number; name: string; members: string[]; expanded: boolean; task_title: string; };
 
-  // Grupurile existente
-  let groups: Group[] = [];
-
-  // Form creare grup
-  let showCreateForm = false;
-  let users: User[] = [];
   let tasks: Task[] = [];
+  let groups: Group[] = [];
+  let users: User[] = [];
+
   let groupName = '';
   let selectedUserIds: number[] = [];
   let selectedTaskId: number | null = null;
+  let showCreateForm = false;
 
-  async function loadGroups() {
-    const res = await fetch('/api/grupuri/');
+  let memberInput = ''; // string cu tot inputul
+
+  onMount(async () => {
+  await fetchTasks();         // preia task-urile din API
+  await fetchGroupsUsers();   // preia userii și alte date
+});
+
+  async function fetchTasks() {
+    const res = await fetch('http://localhost:8000/api/tasks/');
     if (res.ok) {
-      const data = await res.json();
-      groups = data.map((g: any) => ({ ...g, expanded: false }));
+      tasks = await res.json();
+      if (tasks.length === 0) {
+        // dacă nu există task-uri, adăugăm două default
+        const defaultTasks = ['Task 1', 'Task 2'];
+        for (const t of defaultTasks) {
+          const r = await fetch('http://localhost:8000/api/tasks/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title: t, description: '', start_time: new Date().toISOString(), end_time: new Date().toISOString(), status: 'unassigned' })
+          });
+          if (r.ok) {
+            const newTask = await r.json();
+            tasks.push(newTask);
+          }
+        }
+      }
+      // selectăm primul task implicit
+      selectedTaskId = tasks[0]?.id || null;
     }
   }
 
-  // 🔹 Încarcă useri și task-uri pentru formular
-  async function loadUsersTasks() {
-    const res = await fetch('/api/users-tasks/');
+  async function fetchGroupsUsers() {
+    const res = await fetch('http://localhost:8000/api/users-tasks/');
     if (res.ok) {
       const data = await res.json();
       users = data.users;
-      tasks = data.tasks;
+      if (data.tasks?.length) tasks = data.tasks;
+      selectedTaskId = tasks[0]?.id || null;
     }
   }
 
-  onMount(() => {
-    loadGroups();
-    loadUsersTasks();
+  onMount(async () => {
+    await fetchTasks();
+    await fetchGroupsUsers();
   });
 
-  // Toggle dropdown membri
+  async function createGroup() {
+  if (!groupName || !selectedTaskId) {
+    alert("Completează toate câmpurile!");
+    return;
+  }
+
+  const memberNames = memberInput.split(',').map(name => name.trim()).filter(name => name.length > 0);
+
+  const res = await fetch('http://localhost:8000/api/groups/create/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      name: groupName,
+      member_names: memberNames, // sau member_ids dacă vrei să le transformi în id-uri
+      task_id: Number(selectedTaskId)
+    })
+  });
+
+  if (res.ok) {
+    alert('Grup creat cu succes!');
+    showCreateForm = false;
+    groupName = '';
+    memberInput = '';
+    selectedTaskId = tasks[0]?.id || null;
+  } else {
+    const err = await res.text();
+    alert('Eroare la crearea grupului: ' + err);
+  }
+}
+
+
   function toggleDropdown(group: Group) {
     groups = groups.map(g =>
       g.id === group.id ? { ...g, expanded: !g.expanded } : g
     );
   }
-
-  // Adaugă membru local
-  function addMember(group: Group) {
-    const name = prompt("Introdu numele noului membru:");
-    if (name && name.trim() !== "") {
-      groups = groups.map(g =>
-        g.id === group.id ? { ...g, members: [...g.members, name.trim()] } : g
-      );
-    }
-  }
-
-  // Șterge membru local
-  function removeMember(group: Group, member: string) {
-    if (confirm(`Elimini ${member} din ${group.name}?`)) {
-      groups = groups.map(g =>
-        g.id === group.id ? { ...g, members: g.members.filter(m => m !== member) } : g
-      );
-    }
-  }
-
-  // Crează grup nou
-  async function createGroup() {
-    if (!groupName || !selectedTaskId || selectedUserIds.length === 0) {
-      alert("Completează toate câmpurile!");
-      return;
-    }
-
-    const res = await fetch('/api/groups/create/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: groupName,
-        member_ids: selectedUserIds,
-        task_id: selectedTaskId
-      })
-    });
-
-    if (res.ok) {
-      alert('Grup creat cu succes!');
-      showCreateForm = false;
-      groupName = '';
-      selectedUserIds = [];
-      selectedTaskId = null;
-      await loadGroups(); // reîncarcă grupurile
-    } else {
-      alert('Eroare la crearea grupului.');
-    }
-  }
 </script>
+
+
 
 <div class="page-layout">
   <h1>Grupurile Mele</h1>
@@ -143,21 +141,20 @@
         <h2>Creează Grup Nou</h2>
         <input type="text" placeholder="Nume grup" bind:value={groupName} />
 
-        <h3>Selectează membri:</h3>
-        {#each users as user}
-          <label>
-            <input type="checkbox" bind:group={selectedUserIds} value={user.id} />
-            {user.name}
-          </label>
-        {/each}
+        <h3>Participanți (opțional, separate prin virgulă):</h3>
+<input
+  type="text"
+  placeholder="Ex: Ion, Maria, Andrei"
+  bind:value={memberInput}
+/>
 
-        <h3>Selectează task:</h3>
-        <select bind:value={selectedTaskId}>
-          <option value={null}>Selectează task</option>
-          {#each tasks as task}
-            <option value={task.id}>{task.title}</option>
-          {/each}
-        </select>
+       <h3>Selectează task:</h3>
+<select bind:value={selectedTaskId}>
+  <option value="">Selectează task</option> <!-- default -->
+  {#each tasks as task (task.id)}
+    <option value={task.id}>{task.title}</option>
+  {/each}
+</select>
 
         <button class="add-btn" on:click={createGroup}>Creează</button>
         <button class="remove-btn" on:click={() => showCreateForm = false}>Închide</button>
@@ -280,6 +277,14 @@ li {
   align-items: center;
 }
 
+select{
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
 .modal-content {
   background: white;
   padding: 2rem;
@@ -289,5 +294,8 @@ li {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+
+  
+
 }
 </style>

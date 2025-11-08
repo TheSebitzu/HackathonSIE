@@ -9,7 +9,7 @@
   let description = "";
   let start_time = "";
   let end_time = "";
-  let status = "unassigned"; // <-- add this
+  let status = "unassigned"; 
 
   const fetchTasks = async () => {
     const res = await fetch("http://localhost:8000/api/tasks/");
@@ -32,7 +32,7 @@
          description,
           start_time: start,
          end_time: end,
-         status // <-- Acum totul se potrivește cu serializer-ul
+         status 
          })
     });
 
@@ -114,10 +114,10 @@
   width: 100vw;       
   height: 100%;     
   overflow-x: hidden;
-  background-color: rgb(145,221,221); /* culoare exemplu */
+  background-color: rgb(145,221,221); 
 }
 
-/* Formularul centrat */
+
 .formular {
   display: flex;
   flex-direction: row;

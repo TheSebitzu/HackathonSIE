@@ -19,23 +19,13 @@ from .models import Grup, UserGrup, UserTask, Task
 from django.contrib.auth import get_user_model
 from .models import Grup
 from .serializers import GrupSerializer
-
-User = get_user_model()
-
-# -----------------------------------------------
-# 1. THE FUNCTION TO CREATE A GROUP
-# -----------------------------------------------
-@api_view(['POST'])
-def create_group(request):
-    from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
-from .models import Grup, UserGrup, UserTask, Task
-from django.contrib.auth import get_user_model
+from rest_framework.permissions import AllowAny
+from rest_framework.decorators import api_view, permission_classes
 
 User = get_user_model()
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def create_group(request):
     
     data = request.data
@@ -43,7 +33,7 @@ def create_group(request):
     member_ids = data.get("member_ids", [])
     task_id = data.get("task_id")
 
-    if not name or not member_ids or not task_id:
+    if not name or not task_id:
         return Response({"error": "Toate campurile sunt obligatorii"}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
@@ -85,7 +75,10 @@ User = get_user_model()
 
 class UserTaskListView(APIView):
     def get(self, request):
-        users = [{"id": u.id, "name": str(u)} for u in User.objects.all()]
+        users = [
+            {"id": u.id, "name": f"{u.nume} {u.prenume}"} 
+            for u in User.objects.all()
+        ]
         tasks = TaskSerializer(Task.objects.all(), many=True).data
         return Response({"users": users, "tasks": tasks})
 
@@ -109,3 +102,24 @@ class GroupListView(generics.ListAPIView):
     queryset = Grup.objects.all()
     serializer_class = GrupSerializer
     permission_classes = [permissions.AllowAny]
+
+class LogoutView(APIView):
+    """
+    Handles POST requests to log out a user by blacklisting their refresh token.
+    """
+    permission_classes = [AllowAny] # Anyone can try to log out
+
+    def post(self, request):
+        try:
+            refresh_token = request.data["refresh"]
+            if refresh_token is None:
+                return Response({"error": "Refresh token is required"}, status=status.HTTP_400_BAD_REQUEST)
+                
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+
+            return Response(status=status.HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            # This can fail if the token is already expired or invalid
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        

@@ -12,9 +12,6 @@
     task_title: string;
   };
 
-  // Grupurile existente
-  let groups: Group[] = [];
-
   // Form creare grup
   let showCreateForm = false;
   let users: User[] = [];
@@ -23,8 +20,14 @@
   let selectedUserIds: number[] = [];
   let selectedTaskId: number | null = null;
 
+  let groups: Group[] = [
+  { id: 1, name: "Grup Alpha", members: ["Ana", "Mihai"], expanded: false, task_title: "Task 1" },
+  { id: 2, name: "Grup Beta", members: [], expanded: false, task_title: "Fără task" },
+  { id: 3, name: "Grup Gamma", members: ["Ioana"], expanded: false, task_title: "Task 2" }
+];
+
   async function loadGroups() {
-    const res = await fetch('/api/grupuri/');
+    const res = await fetch('http://localhost:8000/api/grupuri/');
     if (res.ok) {
       const data = await res.json();
       groups = data.map((g: any) => ({ ...g, expanded: false }));
@@ -32,7 +35,7 @@
   }
 
   async function loadUsersTasks() {
-    const res = await fetch('/api/users-tasks/');
+    const res = await fetch('http://localhost:8000/api/users-tasks/');
     if (res.ok) {
       const data = await res.json();
       users = data.users;
@@ -40,10 +43,11 @@
     }
   }
 
-  onMount(() => {
-    loadGroups();
-    loadUsersTasks();
-  });
+  //onMount( async () => {
+    //await loadGroups();
+    //await loadUsersTasks();
+    //await fetchGroups();
+  //});
 
   function toggleDropdown(group: Group) {
     groups = groups.map(g =>
@@ -59,33 +63,51 @@
     }
   }
 
-  async function createGroup() {
-    if (!groupName || selectedUserIds.length === 0) {
-      alert("Completează toate câmpurile!");
-      return;
-    }
-
-    const res = await fetch('/api/groups/create/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: groupName,
-        member_ids: selectedUserIds,
-        task_id: selectedTaskId
-      })
-    });
-
-    if (res.ok) {
-      alert('Grup creat cu succes!');
-      showCreateForm = false;
-      groupName = '';
-      selectedUserIds = [];
-      selectedTaskId = null;
-      await loadGroups();
-    } else {
-      alert('Eroare la crearea grupului.');
-    }
+  async function fetchGroups() {
+  const res = await fetch('http://localhost:8000/api/grupuri/');
+  if (res.ok) {
+    const data = await res.json();
+    groups = data.map((g: any) => ({
+      id: g.id,
+      name: g.name,
+      members: g.members || [],
+      expanded: false,
+      task_title: g.task?.title || "Fără task"
+    }));
   }
+}
+
+  async function createGroup() {
+  if (!groupName || !selectedTaskId) {
+    alert("Completează toate câmpurile!");
+    return;
+  }
+
+  const res = await fetch('http://localhost:8000/api/grupuri/create/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      // dacă ai autentificare: 'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({
+      name: groupName,
+      member_ids: selectedUserIds,
+      task_id: Number(selectedTaskId)
+    })
+  });
+
+  if (res.ok) {
+    alert('Grup creat cu succes!');
+    await fetchGroups(); // <── reîncarcă grupurile
+    showCreateForm = false;
+    groupName = '';
+    selectedUserIds = [];
+    selectedTaskId = tasks[0]?.id || null;
+  } else {
+    const err = await res.json();
+    alert('Eroare la crearea grupului: ' + (err.error || res.statusText));
+  }
+}
 </script>
 
 <div class="page-layout">

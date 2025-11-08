@@ -9,6 +9,9 @@
     padding: 1rem;
     margin: 0.5rem 0;
     background-color: #f3f3f3;
+    background-size: cover;
+    margin-top: -5px;
+    margin-left: -5px;
     width: 300px;
     font-family: sans-serif;
     box-shadow: 2px 2px 6px rgba(0,0,0,0.1);

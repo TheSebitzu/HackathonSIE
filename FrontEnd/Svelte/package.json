@@ -54,6 +54,7 @@
 		"svelte"
 	],
 	"dependencies": {
+		"libsodium-wrappers": "^0.7.15",
 		"lucide-svelte": "^0.553.0"
 	}
 }
